@@ -55,16 +55,11 @@ const WordLadder = () => {
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60); // Timer set to 60 seconds
+  const [score, setScore] = useState(0); // Initialize score
 
   useEffect(() => {
     const path = findShortestPath(startWord, targetWord, wordList);
     setShortestPath(path);
-    setCurrentWord(startWord);
-    setInputWord("");
-    setSteps([startWord]);
-    setMessage("");
-    setTimeLeft(60); // Reset timer to 60 seconds
-    setUserCompleted(false);
   }, [startWord, targetWord]);
 
   // Timer countdown effect
@@ -84,6 +79,24 @@ const WordLadder = () => {
 
   const handleChange = (e) => {
     setInputWord(e.target.value);
+  };
+
+  const calculateScore = (inputWord, targetWord) => {
+    let points = 0;
+
+    // Add points for each matching letter
+    for (let i = 0; i < inputWord.length; i++) {
+      if (inputWord[i] === targetWord[i]) {
+        points++;
+      }
+    }
+
+    // Add points for correctly guessing the target word
+    if (inputWord === targetWord) {
+      points += 10; // Adjust the points as needed
+    }
+
+    return points;
   };
 
   const handleSubmit = (e) => {
@@ -108,14 +121,26 @@ const WordLadder = () => {
     setCurrentWord(inputWord);
     setMessage("");
 
+    // Calculate and update the score
+    const newScore = calculateScore(inputWord, targetWord);
+    setScore((prevScore) => prevScore + newScore);
+
     if (inputWord === targetWord) {
       setMessage("Congratulations! You've completed the word ladder!");
       setUserCompleted(true);
-      
+
       const combinedWordList = [...new Set([...wordList, ...steps])];
       const userPath = findShortestPath(startWord, targetWord, combinedWordList);
       setShortestPath(userPath);
-      setTimeLeft(0); // Stop the timer on win
+      
+      // Add time instead of resetting
+      setTimeLeft((prevTime) => prevTime + 30); // Add 30 seconds
+      // Generate new start and target words after winning
+      setStartWord(getRandomWord(wordList));
+      setTargetWord(getRandomWord(wordList));
+      setCurrentWord(startWord); // Reset current word to the new start word
+      setSteps([startWord]); // Reset steps to only include the new start word
+      setUserCompleted(false); // Allow the user to keep playing
     }
 
     setInputWord("");
@@ -128,6 +153,7 @@ const WordLadder = () => {
       <p>Target Word: {getRevealedTarget(currentWord, targetWord)}</p>
       <p>Current Word: {currentWord}</p>
       <p>Time Left: {timeLeft} seconds</p>
+      <p>Score: {score}</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
