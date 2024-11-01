@@ -35,13 +35,12 @@ const findShortestPath = (startWord, targetWord, wordList) => {
   return [];  // Return an empty array if no path found
 };
 
-// Function to count correct letters
-const countCorrectLetters = (currentWord, targetWord) => {
-  let correctCount = 0;
-  for (let i = 0; i < currentWord.length; i++) {
-    if (currentWord[i] === targetWord[i]) correctCount++;
-  }
-  return correctCount;
+// Function to display the correctly matched letters
+const getRevealedTarget = (currentWord, targetWord) => {
+  return targetWord
+    .split("")
+    .map((char, index) => (currentWord[index] === char ? char : "_"))
+    .join("");
 };
 
 // Function to get a random word from a list
@@ -117,9 +116,8 @@ const WordLadder = () => {
     <div style={{ padding: "20px" }}>
       <h1>Word Ladder Game</h1>
       <p>Start Word: {startWord}</p>
-      <p>Target Word: (hidden)</p> {/* Hide the target word */}
+      <p>Target Word: {getRevealedTarget(currentWord, targetWord)}</p> {/* Display matched letters */}
       <p>Current Word: {currentWord}</p>
-      <p>Correct Letters: {countCorrectLetters(currentWord, targetWord)} / {targetWord.length}</p> {/* Show correct letters count */}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
