@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import wordList from "./words.json"; // Adjust the path if needed
 
-// Helper function to check if two words differ by exactly one letter
+// Convert word list into a Set for quick lookup
+const validWords = new Set(wordList);
+
 const isOneLetterDifferent = (word1, word2) => {
   let diffCount = 0;
   for (let i = 0; i < word1.length; i++) {
@@ -10,32 +13,26 @@ const isOneLetterDifferent = (word1, word2) => {
   return diffCount === 1;
 };
 
-// Function to find the shortest path using BFS
 const findShortestPath = (startWord, targetWord, wordList) => {
-  const queue = [[startWord]];  // Queue to store paths
-  const visited = new Set([startWord]);  // Set to track visited words
+  const queue = [[startWord]];
+  const visited = new Set([startWord]);
 
   while (queue.length > 0) {
-    const path = queue.shift();  // Get the first path from the queue
-    const currentWord = path[path.length - 1];  // Last word in the path
+    const path = queue.shift();
+    const currentWord = path[path.length - 1];
 
-    // If we've reached the target, return the path
     if (currentWord === targetWord) return path;
 
-    // Go through each word in the dictionary
     for (const word of wordList) {
-      // If the word differs by one letter and hasn't been visited
       if (isOneLetterDifferent(currentWord, word) && !visited.has(word)) {
-        visited.add(word);  // Mark word as visited
-        queue.push([...path, word]);  // Add new path with the current word
+        visited.add(word);
+        queue.push([...path, word]);
       }
     }
   }
-
-  return [];  // Return an empty array if no path found
+  return [];
 };
 
-// Function to display the correctly matched letters
 const getRevealedTarget = (currentWord, targetWord) => {
   return targetWord
     .split("")
@@ -43,38 +40,47 @@ const getRevealedTarget = (currentWord, targetWord) => {
     .join("");
 };
 
-// Function to get a random word from a list
-const getRandomWord = (words, length) => {
-  const filteredWords = words.filter((word) => word.length === length);
-  const randomIndex = Math.floor(Math.random() * filteredWords.length);
-  return filteredWords[randomIndex];
+const getRandomWord = (words) => {
+  const randomIndex = Math.floor(Math.random() * words.length);
+  return words[randomIndex];
 };
 
 const WordLadder = () => {
-  // Updated word list with 4-letter words
-  const wordList = [
-    "bark", "dark", "park", "lark",
-    "cart", "card", "hard", "ward",
-    "word", "cord", "load", "frog",
-    "clog", "smog", "fold", "gold"
-  ];
-
-  // Randomly select start and target words of the same length
-  const [startWord, setStartWord] = useState(getRandomWord(wordList, 4));
-  const [targetWord, setTargetWord] = useState(getRandomWord(wordList, 4));
-
+  const [startWord, setStartWord] = useState(getRandomWord(wordList));
+  const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
   const [steps, setSteps] = useState([startWord]);
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60); // Timer set to 60 seconds
 
   useEffect(() => {
-    // Find the shortest path when the component mounts
     const path = findShortestPath(startWord, targetWord, wordList);
     setShortestPath(path);
+    setCurrentWord(startWord);
+    setInputWord("");
+    setSteps([startWord]);
+    setMessage("");
+    setTimeLeft(60); // Reset timer to 60 seconds
+    setUserCompleted(false);
   }, [startWord, targetWord]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setMessage("Time's up! Game over.");
+      setUserCompleted(true);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // Clean up on unmount
+  }, [timeLeft]);
 
   const handleChange = (e) => {
     setInputWord(e.target.value);
@@ -85,6 +91,11 @@ const WordLadder = () => {
 
     if (inputWord.length !== startWord.length) {
       setMessage("Word must be the same length!");
+      return;
+    }
+
+    if (!validWords.has(inputWord.toLowerCase())) {
+      setMessage("Input must be a valid word!");
       return;
     }
 
@@ -99,14 +110,12 @@ const WordLadder = () => {
 
     if (inputWord === targetWord) {
       setMessage("Congratulations! You've completed the word ladder!");
-      setUserCompleted(true);  // Mark the user as having completed the game
-
-      // Combine user input steps with the original word list
-      const combinedWordList = [...new Set([...wordList, ...steps])];
+      setUserCompleted(true);
       
-      // Run BFS based on the user's inputted words
+      const combinedWordList = [...new Set([...wordList, ...steps])];
       const userPath = findShortestPath(startWord, targetWord, combinedWordList);
-      setShortestPath(userPath);  // Update the shortest path based on the user's input
+      setShortestPath(userPath);
+      setTimeLeft(0); // Stop the timer on win
     }
 
     setInputWord("");
@@ -116,8 +125,9 @@ const WordLadder = () => {
     <div style={{ padding: "20px" }}>
       <h1>Word Ladder Game</h1>
       <p>Start Word: {startWord}</p>
-      <p>Target Word: {getRevealedTarget(currentWord, targetWord)}</p> {/* Display matched letters */}
+      <p>Target Word: {getRevealedTarget(currentWord, targetWord)}</p>
       <p>Current Word: {currentWord}</p>
+      <p>Time Left: {timeLeft} seconds</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -130,7 +140,6 @@ const WordLadder = () => {
       </form>
       <p style={{ color: "red" }}>{message}</p>
 
-      {/* Display all inputted words */}
       <h3>All Steps Taken:</h3>
       <ul>
         {steps.map((word, index) => (
@@ -138,7 +147,6 @@ const WordLadder = () => {
         ))}
       </ul>
 
-      {/* Display the shortest path after user completes the game */}
       {userCompleted && (
         <>
           <h3>Optimal Solution (Shortest Path):</h3>
