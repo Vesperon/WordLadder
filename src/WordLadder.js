@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import wordList from "./words.json"; // Adjust the path if needed
 
-// Convert word list into a Set for quick lookup
 const validWords = new Set(wordList);
 
 const isOneLetterDifferent = (word1, word2) => {
@@ -54,8 +53,9 @@ const WordLadder = () => {
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60); // Timer set to 60 seconds
-  const [score, setScore] = useState(0); // Initialize score
+  const [timeLeft, setTimeLeft] = useState(300);
+  const [score, setScore] = useState(0);
+  const [timerId, setTimerId] = useState(null); // Timer ID
 
   useEffect(() => {
     const path = findShortestPath(startWord, targetWord, wordList);
@@ -70,11 +70,12 @@ const WordLadder = () => {
       return;
     }
 
-    const timer = setInterval(() => {
+    const id = setInterval(() => {
       setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
+    setTimerId(id); // Store timer ID
 
-    return () => clearInterval(timer); // Clean up on unmount
+    return () => clearInterval(id); // Clean up on unmount
   }, [timeLeft]);
 
   const handleChange = (e) => {
@@ -84,16 +85,14 @@ const WordLadder = () => {
   const calculateScore = (inputWord, targetWord) => {
     let points = 0;
 
-    // Add points for each matching letter
     for (let i = 0; i < inputWord.length; i++) {
       if (inputWord[i] === targetWord[i]) {
         points++;
       }
     }
 
-    // Add points for correctly guessing the target word
     if (inputWord === targetWord) {
-      points += 10; // Adjust the points as needed
+      points += 10; // Adjust points as needed
     }
 
     return points;
@@ -121,26 +120,17 @@ const WordLadder = () => {
     setCurrentWord(inputWord);
     setMessage("");
 
-    // Calculate and update the score
     const newScore = calculateScore(inputWord, targetWord);
     setScore((prevScore) => prevScore + newScore);
 
     if (inputWord === targetWord) {
       setMessage("Congratulations! You've completed the word ladder!");
       setUserCompleted(true);
+      clearInterval(timerId); // Stop the timer when the target word is found
 
       const combinedWordList = [...new Set([...wordList, ...steps])];
       const userPath = findShortestPath(startWord, targetWord, combinedWordList);
       setShortestPath(userPath);
-      
-      // Add time instead of resetting
-      setTimeLeft((prevTime) => prevTime + 30); // Add 30 seconds
-      // Generate new start and target words after winning
-      setStartWord(getRandomWord(wordList));
-      setTargetWord(getRandomWord(wordList));
-      setCurrentWord(startWord); // Reset current word to the new start word
-      setSteps([startWord]); // Reset steps to only include the new start word
-      setUserCompleted(false); // Allow the user to keep playing
     }
 
     setInputWord("");
