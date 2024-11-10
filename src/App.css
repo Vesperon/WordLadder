@@ -95,6 +95,7 @@
    background: #FF8E2C;
   padding: 4px;
   width: 150px;
+  height: 30px;
   margin-left: 45px;
   margin-top: 180px;
   
@@ -119,7 +120,9 @@
 .btn{
   border-radius: 50px;
   background: #FF8E2C;
-  margin-right: 35px;
+  width: 150px;
+  height: 30px;
+  padding: 4px;
 }
 
 .word-placeholder {
@@ -163,7 +166,8 @@ body{
   background: #FF8E2C;
   padding: 4px;
   width: 150px;
-  margin-top: -5px;
+  height: 30px;
+  margin-top: 20px;
   margin-left: 45px;
 }
 
@@ -219,9 +223,7 @@ body{
 }
 
 .textfield{
-  margin-top: -170px;
-  margin-right: 230px;
-  
+  margin-top: -170px;  
 }
 
 .game-container {
@@ -274,6 +276,7 @@ body{
   background: #FF8E2C;
   padding: 4px;
   width: 150px;
+  height: 30px;
   margin-top: -40px;
   margin-left: 45px;
 }

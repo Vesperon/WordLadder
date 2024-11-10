@@ -3,8 +3,11 @@ import wordList from "./words.json"; // Adjust the path if needed
 import { FaPause } from "react-icons/fa6";
 import wordLadderImage from "../src/wordladder.png";
 import backgroundMusic from "./bg1.mp3";
-import backspaceSFX from "./EraseSFX.mp3";
-import lettermatchSFX from "./LetterMatched.mp3";
+import letterMatchSFX from "./letterMatchedSFX.mp3";
+import submitSFX from "./submitSFX.mp3";
+import victorySFX from "./victoryMusic.mp3";
+import lostSFX from "./lostSFX.mp3";
+
 
 const validWords = new Set(wordList);
 
@@ -54,6 +57,7 @@ const WordLadder = () => {
   const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
+  const [hiddenWord,setHiddenWord] = useState("");
   const [steps, setSteps] = useState([startWord]);
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
@@ -65,30 +69,39 @@ const WordLadder = () => {
   const [isMutedMusic, setIsMutedMusic] = useState(false); // Mute music state
   const [isMutedSFX, setIsMutedSFX] = useState(false); // Mute SFX state
   const audioRef = useRef(new Audio(backgroundMusic));    // Create audio instance
-  const backspaceAudioRef = useRef(new Audio(backspaceSFX)); // Backspace sound effect
   const hasStartedMusic = useRef(false);   // Flag to ensure music starts only once
-  const submitSFXRef = useRef(new Audio(lettermatchSFX));
-
+  const submitSFXRef = useRef(new Audio(submitSFX));
+  const letterMatchedSFXRef = useRef(new Audio(letterMatchSFX));
+  const victorySFXRef = useRef(new Audio(victorySFX));
+  const lostSFXRef = useRef(new Audio(lostSFX));
   
   useEffect(() => {
-    const startAudio = () => {
-      if (!hasStartedMusic.current) {
-        audioRef.current.loop = true; // Ensure the background music loops
-        audioRef.current.play().catch((error) => {
-          console.log("Audio playback failed:", error);
-        });
-        hasStartedMusic.current = true; // Set flag to true after starting audio
-      }
-      document.removeEventListener("click", startAudio);
+    audioRef.current.loop = true;
+
+    // Try to play audio immediately
+    audioRef.current.play().catch((error) => {
+      console.log("Autoplay blocked or failed:", error);
+    });
+
+    // Add a one-time event listener for user interaction if playback was blocked
+    const handleUserInteraction = () => {
+      audioRef.current.play().catch((error) => {
+        console.log("Audio playback failed on interaction:", error);
+      });
+      window.removeEventListener("click", handleUserInteraction); // Remove listener after first interaction
+      window.removeEventListener("touchstart", handleUserInteraction); // Remove for touch events as well
     };
 
-    // Add a click listener to start audio on user interaction
-    document.addEventListener("click", startAudio);
+    // Listen for user interactions to attempt playback again if initially blocked
+    window.addEventListener("click", handleUserInteraction);
+    window.addEventListener("touchstart", handleUserInteraction);
 
     return () => {
-      document.removeEventListener("click", startAudio); // Cleanup on unmount
+      // Clean up listeners on unmount
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
     };
-  }, []);
+}, []);
   
   useEffect(() => {
     const path = findShortestPath(startWord, targetWord, wordList);
@@ -99,38 +112,33 @@ const WordLadder = () => {
   // Timer countdown effect
   useEffect(() => {
     if (timeLeft <= 0) {
+      audioRef.current.pause();
+      lostSFXRef.current.currentTime = 0;
+      lostSFXRef.current.play().catch((error) => {
+        console.log("Lost SFX playback failed:", error);
+      });
+      setTimeLeft(0); // Ensure it stops at zero
       setMessage("Time's up! Game over.");
       setUserCompleted(true);
+      
+      clearInterval(timerId); // Clear interval to stop countdown
       return;
     }
+  
     if (!isPaused) {
       const id = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prevTime) => Math.max(prevTime - 1, 0)); // Prevent it from going below zero
       }, 1000);
       setTimerId(id);
-
-      return () => clearInterval(id);
-    }
-
-    const id = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1000);
-    setTimerId(id); // Store timer ID
-
-    return () => clearInterval(id); // Clean up on unmount
   
-  }, [timeLeft, isPaused]);
+      return () => clearInterval(id); // Clear interval on unmount or pause
+    }
+  }, [isPaused, timeLeft]);
+  
+  
 
   
-  const handleKeyDown = (e) => {
-    // Play backspace sound effect if the backspace key is pressed
-    if (e.key === "Backspace") {
-      backspaceAudioRef.current.currentTime = 0; // Reset playback to the start
-      backspaceAudioRef.current.play().catch((error) => {
-        console.log("Backspace audio playback failed:", error);
-      });
-    }
-  };
+
 
   const handleChange = (e) => {
     setInputWord(e.target.value);
@@ -150,6 +158,13 @@ const WordLadder = () => {
     }
 
     return points;
+  };
+
+  const handleLetterMatchSFX = () => {
+    letterMatchedSFXRef.current.currentTime = 0; // Reset playback to the start
+    letterMatchedSFXRef.current.play().catch((error) => {
+      console.log("Letter match audio playback failed:", error);
+    });
   };
 
   const handleSubmit = (e) => {
@@ -180,6 +195,19 @@ const WordLadder = () => {
     const newScore = calculateScore(inputWord, targetWord);
     setScore((prevScore) => prevScore + newScore);
 
+      let hasMatchingLetter = false;
+    for (let i = 0; i < inputWord.length; i++) {
+      if (inputWord[i] === targetWord[i]) {
+        hasMatchingLetter = true;
+        break;
+      }
+    }
+
+    if (hasMatchingLetter && !isMutedSFX) {
+      handleLetterMatchSFX();
+      return;
+    }
+
     submitSFXRef.current.currentTime = 0; // Reset playback to the start
     submitSFXRef.current.play().catch((error) => {
       console.log("Submit audio playback failed:", error);
@@ -188,7 +216,11 @@ const WordLadder = () => {
       setMessage("Congratulations! You've completed the word ladder!");
       setUserCompleted(true);
       clearInterval(timerId); // Stop the timer when the target word is found
-
+      audioRef.current.pause();
+      victorySFXRef.current.currentTime = 0; // Reset playback to the start
+      victorySFXRef.current.play().catch((error) => {
+      console.log("Submit audio playback failed:", error);
+    });
       const combinedWordList = [...new Set([...wordList, ...steps])];
       const userPath = findShortestPath(
         startWord,
@@ -202,22 +234,45 @@ const WordLadder = () => {
   };
 
   const handlePause = () => {
-    setIsPaused((prevState) => !prevState); // Toggle the pause state (show/hide modal)
+    setIsPaused((prevState) => !prevState); // Toggle the pause state
+  
     if (isPaused) {
-      // Resume the timer if it's paused
+      // Resume the timer and music if it's paused
       const id = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
       setTimerId(id); // Store timer ID
+  
+      if (!isMutedMusic) {
+        audioRef.current.play().catch((error) => {
+          console.log("Audio playback failed:", error);
+        });
+      }
     } else {
-      // Stop the timer if it's paused
+      // Pause the timer and music if the game is paused
       clearInterval(timerId);
+      audioRef.current.pause();
     }
   };
+  
 
   const handleContinue = () => {
-    setIsPaused(false);
+    setIsPaused(false); // Set pause state to false
+    
+    // Resume the timer
+    const id = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+    setTimerId(id); // Store the new timer ID
+    
+    // Resume the music if it's not muted
+    if (!isMutedMusic) {
+      audioRef.current.play().catch((error) => {
+        console.log("Audio playback failed:", error);
+      });
+    }
   };
+  
 
   const handleRetry = () => {
     setStartWord(getRandomWord(wordList));
@@ -240,6 +295,10 @@ const WordLadder = () => {
   };
 
   const toggleSFX = () => {
+    submitSFXRef.current.muted = !isMutedSFX;
+    victorySFXRef.current.muted = !isMutedSFX;
+    letterMatchedSFXRef.current.muted = !isMutedSFX;
+    lostSFXRef.current.muted = !isMutedSFX;
     setIsMutedSFX((prev) => !prev);
   };
 
@@ -248,7 +307,6 @@ const WordLadder = () => {
   return (
     <div className="container ">
      <audio ref={audioRef} src={backgroundMusic} loop autoPlay />
-     <audio ref={backspaceAudioRef} src={backspaceSFX} />
       <button onClick={handlePause} className="pause-button">
         <FaPause />
         {isPaused ? "Resume" : ""}
@@ -291,58 +349,68 @@ const WordLadder = () => {
         </div>
         {/* Add a button or form to call handleAddWord with new words */}
       </div>
-      <h5 className="start float-left text-white "> Start Word </h5> <br></br>{" "}
+      <h6 className="start float-left text-white "> Start Word </h6> <br></br>{" "}
       <br></br>
-      <div className="mt-3">
-        <div className="word-placeholder">?</div>
-        <div className="word-placeholder">?</div>
-        <div className="word-placeholder">?</div>
-        <div className="word-placeholder">?</div>
+      <div className="mt-3 word-box" style={{marginLeft:"30px"}}>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="word-box" style={{position:"fixed"}}>
+          {startWord.split("").map((letter, i) => (
+          <div key={i} className="letter-box">
+                    {letter}
+                  </div>
+        ))}
+        </div>
       </div>
       <br></br> <br></br>
       <br></br>
-      <h5 className="startWord float-left px-4 text-white rounded ">
-        {startWord}
-      </h5>
+      
       <h6 className="target text-white">Target Word</h6>
-      <div className="mt-3 wordtarget">
-        <div className="word-targets">?</div>
-        <div className="word-targets">?</div>
-        <div className="word-targets">?</div>
-        <div className="word-targets">?</div>
+      <div className="mt-3 word-box" style={{marginLeft:"470px"}}>
+        <div className="letter-box"></div>
+        <div className="letter-box"></div>
+        <div className="letter-box"></div>
+        <div className="letter-box"></div>
+        <div className="word-box" style={{position:"fixed"}}>
+          {getRevealedTarget(currentWord, targetWord).split("").map((letter, i) => (
+          <div key={i} className="letter-box">
+                    {letter}
+                  </div>
+        ))}
+        </div>
+        
+
       </div>
-      <h5 className="targetword text-white">
-        {" "}
-        {getRevealedTarget(currentWord, targetWord)}
-      </h5>
+      
       <h6 className="current-word float-left text-white ">Current Word:</h6>{" "}
       <br></br> <br></br>
-      <div className="mt-3">
-        <div className="word-current">?</div>
-        <div className="word-current">?</div>
-        <div className="word-current">?</div>
-        <div className="word-current">?</div>
+      <div className="mt-3 word-box" style={{marginLeft:"30px"}}>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="letter-box">?</div>
+        <div className="word-box" style={{position:"fixed"}}>
+          {currentWord.split("").map((letter, i) => (
+          <div key={i} className="letter-box">
+                    {letter}
+                  </div>
+        ))}
+        </div>
       </div>
       <br></br> <br></br>
       <br></br>
-      <h6
-        className="current float-left px-4
-      
-       text-white "
-      >
-        {" "}
-        {currentWord}
-      </h6>{" "}
+
       <br></br> <br></br>
-      <h5 className="float-left time text-white">Time Left: </h5>
+      <h6 className="float-left time text-white">Time Left: </h6>
       <br></br> <br></br>
        <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>             
-      <form onSubmit={handleSubmit} className="textfield">
+      <form onSubmit={handleSubmit} className="textfield ">
         <input
           type="text"
           value={inputWord}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}   // Listen for backspace key
           placeholder="Enter next word"
           disabled={userCompleted}
         />
