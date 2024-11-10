@@ -36,3 +36,249 @@
     transform: rotate(360deg);
   }
 }
+
+
+.image{
+  width: 200px;
+  height: 100px;
+  margin-top: 100px;
+  margin-left: -150px;
+  
+}
+
+/* Modal Overlay */
+.pause-button{
+  float: right;
+  margin-top: 30px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Close Button */
+.close-modal {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #f44336; /* Red color for close button */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+
+.start{
+  border-radius: 50px;
+   background: #FF8E2C;
+  padding: 4px;
+  width: 150px;
+  margin-left: 45px;
+  margin-top: 180px;
+  
+}
+
+.step{
+  padding-right: 70px;
+  padding-top: -500px;
+  border-radius: 50px;
+  background: #FF8E2C;
+ padding: 4px;
+ width: 250px;
+ 
+}
+
+.word{
+  padding-top: 50px;
+  
+}
+
+
+.btn{
+  border-radius: 50px;
+  background: #FF8E2C;
+  margin-right: 35px;
+}
+
+.word-placeholder {
+  background-color: #FF8C00; /* Orange color */
+  color: #FF8C00;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  border-radius: 8px;
+  margin: 5px;
+  float: left;
+
+}
+
+.startWord{
+  letter-spacing: 52px;
+  margin-top: -55px;
+  
+}
+
+
+body{
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #4b2b7f, #8a4fbf); /* Example gradient, adjust as needed */
+  overflow: hidden;
+}
+
+.current{
+  letter-spacing: 52px;
+ margin-top: -72px;
+ 
+}
+
+.current-word{
+  border-radius: 50px;
+  background: #FF8E2C;
+  padding: 4px;
+  width: 150px;
+  margin-top: -5px;
+  margin-left: 45px;
+}
+
+.word-current{
+  background-color: #FF8C00; /* Orange color */
+  color: #FF8C00;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  border-radius: 8px;
+  margin: 5px;
+  float: left;
+  margin-top: -15px;
+
+}
+
+.target{
+  border-radius: 50px;
+  background: #FF8E2C;
+  padding: 4px;
+  width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -60px;
+}
+
+.word-targets{
+  background-color: #FF8C00; /* Orange color */
+  color: #FF8C00;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  border-radius: 8px;
+  margin: 5px;
+  margin-top: 20px;
+ 
+}
+
+.wordtarget{
+  margin-right: 280px;
+}
+
+.targetword{
+  letter-spacing: 52px;
+ margin-top: -45px;
+ margin-left: -5px;
+}
+
+.textfield{
+  margin-top: -170px;
+  margin-right: 230px;
+  
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  color: #fff;
+  margin-left: 900px;
+  margin-top: -50px;
+}
+
+.steps-taken {
+  text-align: center;
+}
+
+.steps-taken-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-height: calc(8 * 50px); /* Assuming each word-box is about 50px tall, adjust if needed */
+  overflow-y: auto;
+}
+
+
+.word-box {
+  display: flex;
+  gap: 5px;
+}
+
+.letter-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: orange;
+  border-radius: 5px;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.solution{
+  margin-right: 20px;
+}
+
+.time{
+  border-radius: 50px;
+  background: #FF8E2C;
+  padding: 4px;
+  width: 150px;
+  margin-top: -40px;
+  margin-left: 45px;
+}
+
+.seconds{
+  margin-left: 70px;
+  margin-top: -40px;
+}
