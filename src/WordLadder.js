@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import wordList from "./words.json"; // Adjust the path if needed
 import {
   FaPause,
@@ -16,6 +17,7 @@ import letterMatchSFX from "./letterMatchedSFX.mp3";
 import submitSFX from "./submitSFX.mp3";
 import victorySFX from "./victoryMusic.mp3";
 import lostSFX from "./lostSFX.mp3";
+import { FaQuestion } from "react-icons/fa"; // Import icons for settings, about, and volume control
 
 const validWords = new Set(wordList);
 
@@ -61,6 +63,7 @@ const getRandomWord = (words) => {
 };
 
 const WordLadder = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const [startWord, setStartWord] = useState(getRandomWord(wordList));
   const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
   const [currentWord, setCurrentWord] = useState(startWord);
@@ -82,6 +85,7 @@ const WordLadder = () => {
   const letterMatchedSFXRef = useRef(new Audio(letterMatchSFX));
   const victorySFXRef = useRef(new Audio(victorySFX));
   const lostSFXRef = useRef(new Audio(lostSFX));
+  const [showAboutCard, setShowAboutCard] = useState(false); // State for About card
 
   useEffect(() => {
     audioRef.current.loop = true;
@@ -141,6 +145,10 @@ const WordLadder = () => {
       return () => clearInterval(id); // Clear interval on unmount or pause
     }
   }, [isPaused, timeLeft]);
+
+  const handleQuit = () => {
+    navigate("/"); // Navigate to home route
+  };
 
   const handleChange = (e) => {
     setInputWord(e.target.value);
@@ -230,6 +238,14 @@ const WordLadder = () => {
     }
 
     setInputWord("");
+  };
+
+  const handleAboutClick = () => {
+    setShowAboutCard(true); // Show the About card overlay
+  };
+
+  const handleCloseAbout = () => {
+    setShowAboutCard(false); // Close the About card overlay
   };
 
   const handlePause = () => {
@@ -332,13 +348,94 @@ const WordLadder = () => {
               <FaRedo /> Retry
             </button>
             <button
-              onClick={handleRetry}
+              onClick={handleQuit}
               className="modal-button"
             >
               <FaDoorOpen /> Quit
             </button>
           </div>
         </div>
+      )}
+
+<button
+        onClick={handleAboutClick}
+        className="btn_set_ab position-absolute top-0 end-0 m-3 rounded-circle"
+      >
+        <FaQuestion className="fs-5 text-white" />
+      </button>
+
+      {/* Conditionally render the About card as an overlay */}
+      {showAboutCard && (
+       <div className="overlay">
+       <div className="card-overlay">
+         <div className="card-body text-white text-justify">
+           <h5 className="fw-bold fs-4 mt-2 abt_game">About This Game</h5>
+     
+           {/* Objective Section */}
+           <div className="mt-3">
+             <h6 className="fw-bold fs-5">Objective:</h6>
+             <p>
+               Transform the start word into the target word by changing one letter
+               at a time. Each intermediate step must be a valid word.
+             </p>
+           </div>
+     
+           {/* How to Play Section */}
+           <div className="fmt-3">
+             <h6 className="fw-bold fs-5">How to Play:</h6>
+             <ul>
+               <li>
+                 Enter a new word by changing exactly one letter of the current word.
+               </li>
+               <li>
+                 The new word must be a valid word (e.g., if the current word is
+                 "bill", you could change it to "ball", "bell", or another valid
+                 word).
+               </li>
+               <li>
+                 Click Submit to check if your word is valid and move to the next
+                 step.
+               </li>
+               <li>
+                 Keep transforming the word until you reach the target word or run
+                 out of time.
+               </li>
+             </ul>
+           </div>
+     
+           {/* Winning Section */}
+           <div className="mt-3">
+             <h6 className="fw-bold fs-5">Winning:</h6>
+             <p className="fs-6 mb-1">
+               You win if you successfully transform the start word into the target
+               word before time runs out.
+             </p>
+           </div>
+     
+           {/* Tips Section */}
+           <div className="mt-3">
+             <h6 className="fw-bold fs-5">Tips:</h6>
+             <ul>
+               <li>
+                 Think of common words that are only one letter different from the
+                 current word.
+               </li>
+               <li>
+                 If you're stuck, try changing different letters until you find a
+                 valid word.
+               </li>
+             </ul>
+           </div>
+     
+           <div className="center-button">
+             <button onClick={handleCloseAbout} className="btn btn-danger">
+               Close
+             </button>
+           </div>
+         </div>
+       </div>
+     </div>
+     
       )}
       
       <img src={wordgameImage} className="image"></img>

@@ -54,6 +54,16 @@ body{
   
 }
 
+@media (max-width: 768px) {
+  .btn_play {
+    font-size: 1.2rem;
+  }
+
+  .logo {
+    width: 80%;
+  }
+}
+
 /* Modal Overlay */
 .pause-button {
   background-color: #FF8C00;;
