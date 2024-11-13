@@ -70,7 +70,7 @@ const WordLadder = () => {
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [score, setScore] = useState(0);
   const [timerId, setTimerId] = useState(null); // Timer ID
   const [isPaused, setIsPaused] = useState(false); // Modal visibility
