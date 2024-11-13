@@ -37,69 +37,272 @@
   }
 }
 
+body{
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #4b2b7f, #8a4fbf); /* Example gradient, adjust as needed */
+  overflow: hidden;
+}
+
 
 .image{
-  width: 200px;
-  height: 100px;
-  margin-top: 100px;
+  width: 350px;
+  height: 150px;
+  margin-top: 50px;
   margin-left: -150px;
   
 }
 
 /* Modal Overlay */
-.pause-button{
+.pause-button {
+  background-color: #FF8C00;;
   float: right;
   margin-top: 30px;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.pause-button:hover {
+  background-color: #c26f09;;
+  transform: scale(1.1);
+}
+
+.pause-button:active {
+  transform: scale(0.95);
+}
+
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10;
 }
 
 /* Modal Content */
 .modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
+  background: rgba(84, 41, 121, 1);
+
+  padding: 30px;
+  border-radius: 10px;
+  width: 70%;
   max-width: 400px;
-  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Close Button */
-.close-modal {
-  margin-top: 10px;
-  padding: 10px 15px;
-  background-color: #f44336; /* Red color for close button */
-  color: white;
+/* Modal Header */
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Icons inside the modal */
+.modal-icons {
+  margin-bottom: 20px;
+}
+
+.icon-button {
+  background: none;
   border: none;
+  font-size: 2rem;
   cursor: pointer;
+  margin: 0 15px;
+  transition: transform 0.2s ease-in-out;
+}
+button:focus{
+  outline:none;
+}
+.icon-button:hover {
+  transform: scale(1.2);
+
 }
 
-.close-modal:hover {
-  background-color: #d32f2f; /* Darker red on hover */
+/*Main Menu*/
+
+.btn_play{
+  border: 2px solid rgba(245, 116, 2, 1);
+  background: rgba(255, 142, 44, 1);
+  box-shadow: 0px 13px 5px 0px rgba(249, 115, 0, 1);
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.25);  
+  font-family: Potta One;
+}
+.btn_set_ab{
+  border: 2px solid rgba(245, 116, 2, 1);
+  background: rgba(255, 142, 44, 1);
+  box-shadow: 0px 13px 5px 0px rgba(249, 115, 0, 1);
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.25);  
+  font-family: Potta One;
+  width: 45px;
+   height: 45px;
 }
 
 
-.start{
-  border-radius: 50px;
-   background: #FF8E2C;
-  padding: 4px;
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  filter: blur(10px); /* Adds blur to the circles */
+  animation: float 8s infinite ease-in-out;
+  z-index: -2; /* Moves each circle even further back */
+}
+
+.main-menu-bg {
+  background: linear-gradient(180deg, #3B1E54 0%, #9B7EBD 100%);
+  overflow: hidden;
+  position: relative;
+  z-index: 1; /* Ensures main content stays in front of the circles */
+}
+
+.logo{
+  width: 450px;
+  height: 200px;
+}
+
+/* Circle sizes and positions */
+.circle1 {
+  width: 200px;
+  height: 200px;
+  background: #8A2BE2;
+  top: 10%;
+  left: 10%;
+}
+
+.circle2 {
+  width: 350px;
+  height: 350px;
+  background: #9932CC;
+  bottom: 50%;
+  right: 10%;
+  animation-duration: 10s;
+}
+
+.circle3 {
   width: 150px;
-  height: 30px;
-  margin-left: 45px;
-  margin-top: 180px;
+  height: 150px;
+  background: #BA55D3;
+  top: 70%;
+  left: 60%;
+  animation-duration: 6s;
   
 }
+.circle4 {
+  width: 400px;
+  height: 400px;
+  background: #9932CC;
+  bottom: 10%;
+  right: 85%;
+  animation-duration: 10s;
+}
+.circle5 {
+  width: 200px;
+  height: 200px;
+  background: #8A2BE2;
+  top: 60%;
+  left: 80%;
+}
+.circle6 {
+  width: 200px;
+  height: 200px;
+  background: #8A2BE2;
+  top: 75%;
+  left: 20%;
+}
+
+/*Card*/
+/* Overlay Styles */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Card Overlay */
+
+.card-overlay {
+  max-width: 90%;
+  max-height: 90%;
+  width: 600px;
+  padding: 20px;
+  background-color: rgba(245, 116, 2, 1);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  
+}
+
+.card-body {
+  padding: 15px;
+  font-family: Potta One;
+}
+
+.card-text {
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+
+.card ul {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.card ul li {
+  margin-bottom: 10px;
+}
+.abt_game{
+  margin-left: 12rem;
+}
+
+.center-button {
+  display: flex;
+  justify-content: center; /* Centers button horizontally */
+  margin-top: 20px; /* Adds space above the button */
+}
+
+/* Buttons inside the modal */
+.modal-button {
+  background: rgba(255, 142, 44, 1);
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+  background-color: rgb(204, 103, 14);
+}
+
+
 
 .step{
   padding-right: 70px;
@@ -117,49 +320,41 @@
 }
 
 
-.btn{
+.enter{
   border-radius: 50px;
   background: #FF8E2C;
   width: 150px;
   height: 30px;
   padding: 4px;
+  outline: none;
 }
 
-.word-placeholder {
-  background-color: #FF8C00; /* Orange color */
-  color: #FF8C00;
-  width: 50px;
-  height: 50px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5em;
-  border-radius: 8px;
-  margin: 5px;
-  float: left;
-
-}
-
-.startWord{
-  letter-spacing: 52px;
-  margin-top: -55px;
+.start{
+  border-radius: 50px;
+   background: #FF8E2C;
+  padding: 4px;
+  width: 150px;
+  height: 30px;
+  margin-left: 65px;
+  margin-top: 180px;
   
 }
 
 
-body{
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  background: linear-gradient(to bottom, #4b2b7f, #8a4fbf); /* Example gradient, adjust as needed */
-  overflow: hidden;
+.start-box{
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: orange;
+  border-radius: 5px;
+  font-size: 1.5em;
+  color: #fff;
+  margin-top: -5px;
 }
 
-.current{
-  letter-spacing: 52px;
- margin-top: -72px;
- 
-}
+
 
 .current-word{
   border-radius: 50px;
@@ -167,24 +362,21 @@ body{
   padding: 4px;
   width: 150px;
   height: 30px;
-  margin-top: 20px;
-  margin-left: 45px;
+  margin-top: -30px;
+  margin-left: 65px;
 }
 
-.word-current{
-  background-color: #FF8C00; /* Orange color */
-  color: #FF8C00;
+.current-box{
   width: 50px;
   height: 50px;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  background-color: orange;
+  border-radius: 5px;
   font-size: 1.5em;
-  border-radius: 8px;
-  margin: 5px;
-  float: left;
-  margin-top: -15px;
-
+  color: #fff;
+  margin-top: -35px;
 }
 
 .target{
@@ -192,38 +384,29 @@ body{
   background: #FF8E2C;
   padding: 4px;
   width: 150px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: -60px;
+  margin-left: 500px;
+  margin-top: -95px;
 }
 
-.word-targets{
-  background-color: #FF8C00; /* Orange color */
-  color: #FF8C00;
+
+.target-box{
   width: 50px;
   height: 50px;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  background-color: orange;
+  border-radius: 5px;
   font-size: 1.5em;
-  border-radius: 8px;
-  margin: 5px;
-  margin-top: 20px;
+  color: #fff;
  
+  
 }
 
-.wordtarget{
-  margin-right: 280px;
-}
-
-.targetword{
-  letter-spacing: 52px;
- margin-top: -45px;
- margin-left: -5px;
-}
 
 .textfield{
-  margin-top: -170px;  
+  margin-top: -200px;  
+  margin-left: 50px;
 }
 
 .game-container {
@@ -233,11 +416,26 @@ body{
   position: fixed;
   color: #fff;
   margin-left: 900px;
-  margin-top: -50px;
+  margin-top: -30px;
 }
 
-.steps-taken {
-  text-align: center;
+#scrollable-container {
+  width: 200px;          /* Adjust width as needed */
+  height: 300px;         /* Adjust height as needed */
+  overflow-y: scroll;    /* Allow vertical scrolling */
+  scrollbar-width: none; /* For Firefox - hide scrollbar */
+}
+
+#scrollable-container::-webkit-scrollbar {
+  display: none;         /* For Chrome, Safari, and Edge - hide scrollbar */
+}
+
+.all{
+  border-radius: 50px;
+  background: #FF8E2C;
+  padding: 4px;
+  width: 180px;
+  padding: 4px;
 }
 
 .steps-taken-list {
@@ -267,6 +465,20 @@ body{
   color: #fff;
 }
 
+#single-line-border {
+  background-color: transparent; /* Set background to transparent */
+  border: none;                  /* Remove default border */
+  border-bottom: 2px solid #FF7F00; /* Add an underline border, if desired */
+  padding: 8px 4px;              /* Adjust padding */
+  outline: none;                 /* Remove outline on focus */
+  color: #000;               /* Remove the outline on focus */
+}
+
+#single-line-border:focus {
+  border-bottom-color: #FF4500; /* Change color on focus, if desired */
+}
+
+
 .solution{
   margin-right: 20px;
 }
@@ -277,11 +489,80 @@ body{
   padding: 4px;
   width: 150px;
   height: 30px;
-  margin-top: -40px;
-  margin-left: 45px;
+  margin-top: -80px;
+  margin-left: 65px;
 }
 
 .seconds{
-  margin-left: 70px;
-  margin-top: -40px;
+  margin-left: 90px;
+  margin-top: -70px;
+}
+
+.blur-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Moves the entire blur container to the back */
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  filter: blur(10px); /* Adds blur to the circles */
+  animation: float 8s infinite ease-in-out;
+  z-index: -2; /* Moves each circle even further back */
+}
+
+.main-menu-bg {
+  background: linear-gradient(180deg, #3B1E54 0%, #9B7EBD 100%);
+  overflow: hidden;
+  position: relative;
+  z-index: 1; /* Ensures main content stays in front of the circles */
+}
+
+
+/* Circle sizes and positions */
+.circle1 {
+  width: 200px;
+  height: 200px;
+  background: #8A2BE2;
+  top: 10%;
+  left: 10%;
+}
+
+.circle2 {
+  width: 350px;
+  height: 350px;
+  background: #9932CC;
+  bottom: 50%;
+  right: 10%;
+  animation-duration: 10s;
+}
+
+.circle3 {
+  width: 150px;
+  height: 150px;
+  background: #BA55D3;
+  top: 70%;
+  left: 60%;
+  animation-duration: 6s;
+  
+}
+.circle4 {
+  width: 400px;
+  height: 400px;
+  background: #9932CC;
+  bottom: 10%;
+  right: 85%;
+  animation-duration: 10s;
+}
+.circle5 {
+  width: 200px;
+  height: 200px;
+  background: #8A2BE2;
+  top: 60%;
+  left: 80%;
 }

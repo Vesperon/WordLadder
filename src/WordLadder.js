@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import wordList from "./words.json"; // Adjust the path if needed
-import { FaPause } from "react-icons/fa6";
-import wordLadderImage from "../src/wordladder.png";
+import {
+  FaPause,
+  FaVolumeUp,
+  FaVolumeMute,
+  FaMusic,
+  FaBan,
+  FaPlay,
+  FaRedo,
+  FaDoorOpen,
+} from "react-icons/fa"; // Import icons
+import wordgameImage from "../src/wordgame.png";
 import backgroundMusic from "./bg1.mp3";
 import letterMatchSFX from "./letterMatchedSFX.mp3";
 import submitSFX from "./submitSFX.mp3";
 import victorySFX from "./victoryMusic.mp3";
 import lostSFX from "./lostSFX.mp3";
-
 
 const validWords = new Set(wordList);
 
@@ -57,7 +65,7 @@ const WordLadder = () => {
   const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
-  const [hiddenWord,setHiddenWord] = useState("");
+  const [hiddenWord, setHiddenWord] = useState("");
   const [steps, setSteps] = useState([startWord]);
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
@@ -68,13 +76,13 @@ const WordLadder = () => {
   const [isPaused, setIsPaused] = useState(false); // Modal visibility
   const [isMutedMusic, setIsMutedMusic] = useState(false); // Mute music state
   const [isMutedSFX, setIsMutedSFX] = useState(false); // Mute SFX state
-  const audioRef = useRef(new Audio(backgroundMusic));    // Create audio instance
-  const hasStartedMusic = useRef(false);   // Flag to ensure music starts only once
+  const audioRef = useRef(new Audio(backgroundMusic)); // Create audio instance
+  const hasStartedMusic = useRef(false); // Flag to ensure music starts only once
   const submitSFXRef = useRef(new Audio(submitSFX));
   const letterMatchedSFXRef = useRef(new Audio(letterMatchSFX));
   const victorySFXRef = useRef(new Audio(victorySFX));
   const lostSFXRef = useRef(new Audio(lostSFX));
-  
+
   useEffect(() => {
     audioRef.current.loop = true;
 
@@ -101,12 +109,11 @@ const WordLadder = () => {
       window.removeEventListener("click", handleUserInteraction);
       window.removeEventListener("touchstart", handleUserInteraction);
     };
-}, []);
-  
+  }, []);
+
   useEffect(() => {
     const path = findShortestPath(startWord, targetWord, wordList);
     setShortestPath(path);
-    
   }, [startWord, targetWord]);
 
   // Timer countdown effect
@@ -120,25 +127,20 @@ const WordLadder = () => {
       setTimeLeft(0); // Ensure it stops at zero
       setMessage("Time's up! Game over.");
       setUserCompleted(true);
-      
+
       clearInterval(timerId); // Clear interval to stop countdown
       return;
     }
-  
+
     if (!isPaused) {
       const id = setInterval(() => {
         setTimeLeft((prevTime) => Math.max(prevTime - 1, 0)); // Prevent it from going below zero
       }, 1000);
       setTimerId(id);
-  
+
       return () => clearInterval(id); // Clear interval on unmount or pause
     }
   }, [isPaused, timeLeft]);
-  
-  
-
-  
-
 
   const handleChange = (e) => {
     setInputWord(e.target.value);
@@ -170,9 +172,6 @@ const WordLadder = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
-
-
     if (inputWord.length !== startWord.length) {
       setMessage("Word must be the same length!");
       return;
@@ -195,7 +194,7 @@ const WordLadder = () => {
     const newScore = calculateScore(inputWord, targetWord);
     setScore((prevScore) => prevScore + newScore);
 
-      let hasMatchingLetter = false;
+    let hasMatchingLetter = false;
     for (let i = 0; i < inputWord.length; i++) {
       if (inputWord[i] === targetWord[i]) {
         hasMatchingLetter = true;
@@ -219,8 +218,8 @@ const WordLadder = () => {
       audioRef.current.pause();
       victorySFXRef.current.currentTime = 0; // Reset playback to the start
       victorySFXRef.current.play().catch((error) => {
-      console.log("Submit audio playback failed:", error);
-    });
+        console.log("Submit audio playback failed:", error);
+      });
       const combinedWordList = [...new Set([...wordList, ...steps])];
       const userPath = findShortestPath(
         startWord,
@@ -235,14 +234,14 @@ const WordLadder = () => {
 
   const handlePause = () => {
     setIsPaused((prevState) => !prevState); // Toggle the pause state
-  
+
     if (isPaused) {
       // Resume the timer and music if it's paused
       const id = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
       setTimerId(id); // Store timer ID
-  
+
       if (!isMutedMusic) {
         audioRef.current.play().catch((error) => {
           console.log("Audio playback failed:", error);
@@ -254,17 +253,16 @@ const WordLadder = () => {
       audioRef.current.pause();
     }
   };
-  
 
   const handleContinue = () => {
     setIsPaused(false); // Set pause state to false
-    
+
     // Resume the timer
     const id = setInterval(() => {
       setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
     setTimerId(id); // Store the new timer ID
-    
+
     // Resume the music if it's not muted
     if (!isMutedMusic) {
       audioRef.current.play().catch((error) => {
@@ -272,7 +270,6 @@ const WordLadder = () => {
       });
     }
   };
-  
 
   const handleRetry = () => {
     setStartWord(getRandomWord(wordList));
@@ -302,40 +299,53 @@ const WordLadder = () => {
     setIsMutedSFX((prev) => !prev);
   };
 
-  
-  
   return (
     <div className="container ">
-     <audio ref={audioRef} src={backgroundMusic} loop autoPlay />
+      {/* Background Blurry Circles */}
+      <div className="blur-container">
+        <div className="circle circle1"></div>
+        <div className="circle circle2"></div>
+        <div className="circle circle3"></div>
+        <div className="circle circle4"></div>
+        <div className="circle circle5"></div>
+      </div>
+      <audio ref={audioRef} src={backgroundMusic} loop autoPlay />
       <button onClick={handlePause} className="pause-button">
         <FaPause />
-        {isPaused ? "Resume" : ""}
       </button>
       {isPaused && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Game Paused</h2>
-
-            <button onClick={toggleMusic}>
-              {isMutedMusic ? "Unmute Music" : "Mute Music"}
+            <h2 className="text-white">Game Paused</h2>
+            <div className="modal-icons">
+              <button onClick={toggleMusic} className="icon-button text-white">
+                {isMutedMusic ? <FaVolumeMute /> : <FaVolumeUp />}
+              </button>
+              <button onClick={toggleSFX} className="icon-button text-white">
+                {isMutedSFX ? <FaBan /> : <FaMusic />}
+              </button>
+            </div>
+            <button onClick={handleContinue} className="modal-button">
+              <FaPlay /> Continue
             </button>
-            <button onClick={toggleSFX}>
-              {isMutedSFX ? "Unmute SFX" : "Mute SFX"}
+            <button onClick={() => window.location.reload()} className="modal-button">
+              <FaRedo /> Retry
             </button>
-
-            <button onClick={() => window.location.reload()}>Retry</button>
-            <button onClick={() => window.location.reload()}>Quit</button>
-            <button onClick={handleContinue}>Continue</button>
+            <button
+              onClick={handleRetry}
+              className="modal-button"
+            >
+              <FaDoorOpen /> Quit
+            </button>
           </div>
         </div>
       )}
-      <img src={wordLadderImage} className="image"></img>
-     
-
-     <div className="game-container">
+      
+      <img src={wordgameImage} className="image"></img>
+      <div className="game-container">
         <div className="steps-taken">
-          <h3>All Steps Taken:</h3>
-          <div className="steps-taken-list">
+          <h5 className="all">All Steps Taken</h5>
+          <div className="steps-taken-list" id="scrollable-container">
             {steps.map((word, index) => (
               <div key={index} className="word-box">
                 {word.split("").map((letter, i) => (
@@ -351,71 +361,70 @@ const WordLadder = () => {
       </div>
       <h6 className="start float-left text-white "> Start Word </h6> <br></br>{" "}
       <br></br>
-      <div className="mt-3 word-box" style={{marginLeft:"30px"}}>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="word-box" style={{position:"fixed"}}>
+      <div className="mt-3 word-box" style={{ marginLeft: "30px" }}>
+        <div className="start-box">?</div>
+        <div className="start-box">?</div>
+        <div className="start-box">?</div>
+        <div className="start-box">?</div>
+        <div className="word-box" style={{ position: "fixed" }}>
           {startWord.split("").map((letter, i) => (
-          <div key={i} className="letter-box">
-                    {letter}
-                  </div>
-        ))}
+            <div key={i} className="start-box">
+              {letter}
+            </div>
+          ))}
         </div>
       </div>
       <br></br> <br></br>
       <br></br>
-      
       <h6 className="target text-white">Target Word</h6>
-      <div className="mt-3 word-box" style={{marginLeft:"470px"}}>
-        <div className="letter-box"></div>
-        <div className="letter-box"></div>
-        <div className="letter-box"></div>
-        <div className="letter-box"></div>
-        <div className="word-box" style={{position:"fixed"}}>
-          {getRevealedTarget(currentWord, targetWord).split("").map((letter, i) => (
-          <div key={i} className="letter-box">
-                    {letter}
-                  </div>
-        ))}
+      <div className="mt-3  word-box" style={{ marginLeft: "470px" }}>
+        <div className="target-box"></div>
+        <div className="target-box"></div>
+        <div className="target-box"></div>
+        <div className="target-box"></div>
+        <div className="word-box" style={{ position: "fixed" }}>
+          {getRevealedTarget(currentWord, targetWord)
+            .split("")
+            .map((letter, i) => (
+              <div key={i} className="target-box">
+                {letter}
+              </div>
+            ))}
         </div>
-        
-
       </div>
-      
       <h6 className="current-word float-left text-white ">Current Word:</h6>{" "}
       <br></br> <br></br>
-      <div className="mt-3 word-box" style={{marginLeft:"30px"}}>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="letter-box">?</div>
-        <div className="word-box" style={{position:"fixed"}}>
+      <div className="mt-3 word-box" style={{ marginLeft: "30px" }}>
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="word-box" style={{ position: "fixed" }}>
           {currentWord.split("").map((letter, i) => (
-          <div key={i} className="letter-box">
-                    {letter}
-                  </div>
-        ))}
+            <div key={i} className="current-box">
+              {letter}
+            </div>
+          ))}
         </div>
       </div>
       <br></br> <br></br>
       <br></br>
-
       <br></br> <br></br>
       <h6 className="float-left time text-white">Time Left: </h6>
       <br></br> <br></br>
-       <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>             
-      <form onSubmit={handleSubmit} className="textfield ">
+      <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>
+      <form onSubmit={handleSubmit} className="textfield  ">
         <input
+          className="text-white"
           type="text"
           value={inputWord}
           onChange={handleChange}
           placeholder="Enter next word"
+          id="single-line-border"
           disabled={userCompleted}
         />
         <br></br> <br></br>
-        <button type="submit" className="btn text-white">
+        <button type="submit" className="enter text-white">
           Enter
         </button>
       </form>
