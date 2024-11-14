@@ -443,8 +443,8 @@ const WordLadder = () => {
        <img src={wordgameImage} className="image"></img>
     <div class="row align-items-start">
       <div class="col">
-      <h6 className="start float-left text-white mx-4 "> Start Word </h6> <br></br>{" "}
-      <br></br>
+        <div className="target-container">
+      <h6 className="start float-left text-white mx-4 "> Start Word </h6> 
       <div className="mt-3 word-box float-left" >
         <div className="start-box">?</div>
         <div className="start-box">?</div>
@@ -458,9 +458,11 @@ const WordLadder = () => {
           ))}
         </div>
       </div>
+      </div>
 
-      <h6 className="current-word float-left text-white mx-4 ">Current Word</h6>{" "}
-      <br></br> <br></br>
+      <div className="target-container">
+      <h6 className="current-word float-left text-white mx-4 ">Current Word</h6>
+     
       <div className="mt-3 word-box float-left">
         <div className="current-box">?</div>
         <div className="current-box">?</div>
@@ -474,10 +476,11 @@ const WordLadder = () => {
           ))}
         </div>
         </div>
-
+        </div>
+        <div className="target-container">
         <h6 className="float-left time text-white mx-4">Time Left: </h6>
         <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>
-
+        </div>
       </div>
       <div class="col">
         <div className="target-container">
@@ -517,7 +520,7 @@ const WordLadder = () => {
       
       </div>
       <div class="col">
-      
+      <div  className="target-container">
           <h6 className="all float-right text-white mx-4">All Steps Taken</h6>
           <div className="steps-taken-list float-right mt-3" id="scrollable-container">
             {steps.map((word, index) => (
@@ -529,7 +532,7 @@ const WordLadder = () => {
                 ))}
               </div>
             ))}
-         
+         </div>
         {/* Add a button or form to call handleAddWord with new words */}
       </div>
       </div>
