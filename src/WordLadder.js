@@ -316,8 +316,9 @@ const WordLadder = () => {
   };
 
   return (
-    <div className="container ">
-      {/* Background Blurry Circles */}
+    
+    <div class="container text-center">
+      
       <div className="blur-container">
         <div className="circle circle1"></div>
         <div className="circle circle2"></div>
@@ -325,8 +326,9 @@ const WordLadder = () => {
         <div className="circle circle4"></div>
         <div className="circle circle5"></div>
       </div>
+
       <audio ref={audioRef} src={backgroundMusic} loop autoPlay />
-      <button onClick={handlePause} className="pause-button">
+      <button onClick={handlePause} className="pause-button ">
         <FaPause />
       </button>
       {isPaused && (
@@ -344,121 +346,106 @@ const WordLadder = () => {
             <button onClick={handleContinue} className="modal-button">
               <FaPlay /> Continue
             </button>
-            <button onClick={() => window.location.reload()} className="modal-button">
-              <FaRedo /> Retry
-            </button>
             <button
-              onClick={handleQuit}
+              onClick={() => window.location.reload()}
               className="modal-button"
             >
+              <FaRedo /> Retry
+            </button>
+            <button onClick={handleQuit} className="modal-button">
               <FaDoorOpen /> Quit
             </button>
           </div>
         </div>
       )}
-
-<button
+      <button
         onClick={handleAboutClick}
-        className="btn_set_ab position-absolute top-0 end-0 m-3 rounded-circle"
+        className="btn_set_ab float-right  rounded-circle"
       >
         <FaQuestion className="fs-5 text-white" />
       </button>
-
       {/* Conditionally render the About card as an overlay */}
       {showAboutCard && (
-       <div className="overlay">
-       <div className="card-overlay">
-         <div className="card-body text-white text-justify">
-           <h5 className="fw-bold fs-4 mt-2 abt_game">About This Game</h5>
-     
-           {/* Objective Section */}
-           <div className="mt-3">
-             <h6 className="fw-bold fs-5">Objective:</h6>
-             <p>
-               Transform the start word into the target word by changing one letter
-               at a time. Each intermediate step must be a valid word.
-             </p>
-           </div>
-     
-           {/* How to Play Section */}
-           <div className="fmt-3">
-             <h6 className="fw-bold fs-5">How to Play:</h6>
-             <ul>
-               <li>
-                 Enter a new word by changing exactly one letter of the current word.
-               </li>
-               <li>
-                 The new word must be a valid word (e.g., if the current word is
-                 "bill", you could change it to "ball", "bell", or another valid
-                 word).
-               </li>
-               <li>
-                 Click Submit to check if your word is valid and move to the next
-                 step.
-               </li>
-               <li>
-                 Keep transforming the word until you reach the target word or run
-                 out of time.
-               </li>
-             </ul>
-           </div>
-     
-           {/* Winning Section */}
-           <div className="mt-3">
-             <h6 className="fw-bold fs-5">Winning:</h6>
-             <p className="fs-6 mb-1">
-               You win if you successfully transform the start word into the target
-               word before time runs out.
-             </p>
-           </div>
-     
-           {/* Tips Section */}
-           <div className="mt-3">
-             <h6 className="fw-bold fs-5">Tips:</h6>
-             <ul>
-               <li>
-                 Think of common words that are only one letter different from the
-                 current word.
-               </li>
-               <li>
-                 If you're stuck, try changing different letters until you find a
-                 valid word.
-               </li>
-             </ul>
-           </div>
-     
-           <div className="center-button">
-             <button onClick={handleCloseAbout} className="btn btn-danger">
-               Close
-             </button>
-           </div>
-         </div>
-       </div>
-     </div>
-     
-      )}
-      
-      <img src={wordgameImage} className="image"></img>
-      <div className="game-container">
-        <div className="steps-taken">
-          <h5 className="all">All Steps Taken</h5>
-          <div className="steps-taken-list" id="scrollable-container">
-            {steps.map((word, index) => (
-              <div key={index} className="word-box">
-                {word.split("").map((letter, i) => (
-                  <div key={i} className="letter-box">
-                    {letter}
-                  </div>
-                ))}
+        <div className="overlay">
+          <div className="card-overlay">
+            <div className="card-body text-white text-justify">
+              <h5 className="fw-bold fs-4 mt-2 abt_game">About This Game</h5>
+
+              {/* Objective Section */}
+              <div className="mt-3">
+                <h6 className="fw-bold fs-5">Objective:</h6>
+                <p>
+                  Transform the start word into the target word by changing one
+                  letter at a time. Each intermediate step must be a valid word.
+                </p>
               </div>
-            ))}
+
+              {/* How to Play Section */}
+              <div className="fmt-3">
+                <h6 className="fw-bold fs-5">How to Play:</h6>
+                <ul>
+                  <li>
+                    Enter a new word by changing exactly one letter of the
+                    current word.
+                  </li>
+                  <li>
+                    The new word must be a valid word (e.g., if the current word
+                    is "bill", you could change it to "ball", "bell", or another
+                    valid word).
+                  </li>
+                  <li>
+                    Click Submit to check if your word is valid and move to the
+                    next step.
+                  </li>
+                  <li>
+                    Keep transforming the word until you reach the target word
+                    or run out of time.
+                  </li>
+                </ul>
+              </div>
+
+              {/* Winning Section */}
+              <div className="mt-3">
+                <h6 className="fw-bold fs-5">Winning:</h6>
+                <p className="fs-6 mb-1">
+                  You win if you successfully transform the start word into the
+                  target word before time runs out.
+                </p>
+              </div>
+
+              {/* Tips Section */}
+              <div className="mt-3">
+                <h6 className="fw-bold fs-5">Tips:</h6>
+                <ul>
+                  <li>
+                    Think of common words that are only one letter different
+                    from the current word.
+                  </li>
+                  <li>
+                    If you're stuck, try changing different letters until you
+                    find a valid word.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="center-button">
+                <button onClick={handleCloseAbout} className="btn btn-danger">
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        {/* Add a button or form to call handleAddWord with new words */}
-      </div>
-      <h6 className="start float-left text-white "> Start Word </h6> <br></br>{" "}
+      )}
+
+
+
+       <img src={wordgameImage} className="image"></img>
+    <div class="row align-items-start">
+      <div class="col">
+      <h6 className="start float-left text-white mx-4 "> Start Word </h6> <br></br>{" "}
       <br></br>
-      <div className="mt-3 word-box" style={{ marginLeft: "30px" }}>
+      <div className="mt-3 word-box float-left" >
         <div className="start-box">?</div>
         <div className="start-box">?</div>
         <div className="start-box">?</div>
@@ -471,10 +458,31 @@ const WordLadder = () => {
           ))}
         </div>
       </div>
+
+      <h6 className="current-word float-left text-white mx-4 ">Current Word</h6>{" "}
       <br></br> <br></br>
-      <br></br>
-      <h6 className="target text-white">Target Word</h6>
-      <div className="mt-3  word-box" style={{ marginLeft: "470px" }}>
+      <div className="mt-3 word-box float-left">
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="current-box">?</div>
+        <div className="word-box" style={{ position: "fixed" }}>
+          {currentWord.split("").map((letter, i) => (
+            <div key={i} className="current-box">
+              {letter}
+            </div>
+          ))}
+        </div>
+        </div>
+
+        <h6 className="float-left time text-white mx-4">Time Left: </h6>
+        <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>
+
+      </div>
+      <div class="col">
+        <div className="target-container">
+      <h6 className="target text-white ">Target Word</h6>
+      <div className="mt-3  word-box" >
         <div className="target-box"></div>
         <div className="target-box"></div>
         <div className="target-box"></div>
@@ -489,27 +497,7 @@ const WordLadder = () => {
             ))}
         </div>
       </div>
-      <h6 className="current-word float-left text-white ">Current Word:</h6>{" "}
-      <br></br> <br></br>
-      <div className="mt-3 word-box" style={{ marginLeft: "30px" }}>
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="word-box" style={{ position: "fixed" }}>
-          {currentWord.split("").map((letter, i) => (
-            <div key={i} className="current-box">
-              {letter}
-            </div>
-          ))}
-        </div>
       </div>
-      <br></br> <br></br>
-      <br></br>
-      <br></br> <br></br>
-      <h6 className="float-left time text-white">Time Left: </h6>
-      <br></br> <br></br>
-      <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>
       <form onSubmit={handleSubmit} className="textfield  ">
         <input
           className="text-white"
@@ -520,23 +508,33 @@ const WordLadder = () => {
           id="single-line-border"
           disabled={userCompleted}
         />
-        <br></br> <br></br>
-        <button type="submit" className="enter text-white">
+        <br></br><br></br>
+        <button type="submit" className="enter text-white ">
           Enter
         </button>
       </form>
       <p style={{ color: "red" }}>{message}</p>
-      {userCompleted && (
-        <div className="solution">
-          <h3>Optimal Solution </h3>
-          <p>
-            {shortestPath.length > 0
-              ? shortestPath.join(" -> ")
-              : "No path found"}
-          </p>
-        </div>
-      )}
+      
+      </div>
+      <div class="col">
+      
+          <h6 className="all float-right text-white mx-4">All Steps Taken</h6>
+          <div className="steps-taken-list float-right mt-3" id="scrollable-container">
+            {steps.map((word, index) => (
+              <div key={index} className="word-box">
+                {word.split("").map((letter, i) => (
+                  <div key={i} className="letter-box">
+                    {letter}
+                  </div>
+                ))}
+              </div>
+            ))}
+         
+        {/* Add a button or form to call handleAddWord with new words */}
+      </div>
+      </div>
     </div>
+  </div>
   );
 };
 

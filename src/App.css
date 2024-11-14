@@ -50,7 +50,7 @@ body{
   width: 350px;
   height: 150px;
   margin-top: 50px;
-  margin-left: -150px;
+  margin-left: 100px;
   
 }
 
@@ -65,10 +65,12 @@ body{
 }
 
 /* Modal Overlay */
-.pause-button {
+/* Modal Overlay */
+.pause-button{
   background-color: #FF8C00;;
   float: right;
-  margin-top: 30px;
+  margin-right: 90px;
+  margin-top: 50px;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -91,7 +93,6 @@ body{
 .pause-button:active {
   transform: scale(0.95);
 }
-
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -106,17 +107,18 @@ body{
   z-index: 10;
 }
 
+
 /* Modal Content */
 .modal-content {
-  background: rgba(84, 41, 121, 1);
-
+  background-color: #542979 !important;
   padding: 30px;
-  border-radius: 10px;
+  border-radius: 10px !important;
   width: 70%;
   max-width: 400px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
 
 /* Modal Header */
 h2 {
@@ -156,13 +158,32 @@ button:focus{
   font-family: Potta One;
 }
 .btn_set_ab{
-  border: 2px solid rgba(245, 116, 2, 1);
-  background: rgba(255, 142, 44, 1);
-  box-shadow: 0px 13px 5px 0px rgba(249, 115, 0, 1);
-  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.25);  
-  font-family: Potta One;
-  width: 45px;
-   height: 45px;
+  background-color: #FF8C00;;
+
+  margin-top: 50px;
+  margin-right: -130px;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.btn_set_ab:hover {
+  background-color: #c26f09;;
+  transform: scale(1.1);
+}
+
+.btn_set_ab:active {
+  transform: scale(0.95);
 }
 
 
@@ -187,55 +208,7 @@ button:focus{
   height: 200px;
 }
 
-/* Circle sizes and positions */
-.circle1 {
-  width: 200px;
-  height: 200px;
-  background: #8A2BE2;
-  top: 10%;
-  left: 10%;
-}
 
-.circle2 {
-  width: 350px;
-  height: 350px;
-  background: #9932CC;
-  bottom: 50%;
-  right: 10%;
-  animation-duration: 10s;
-}
-
-.circle3 {
-  width: 150px;
-  height: 150px;
-  background: #BA55D3;
-  top: 70%;
-  left: 60%;
-  animation-duration: 6s;
-  
-}
-.circle4 {
-  width: 400px;
-  height: 400px;
-  background: #9932CC;
-  bottom: 10%;
-  right: 85%;
-  animation-duration: 10s;
-}
-.circle5 {
-  width: 200px;
-  height: 200px;
-  background: #8A2BE2;
-  top: 60%;
-  left: 80%;
-}
-.circle6 {
-  width: 200px;
-  height: 200px;
-  background: #8A2BE2;
-  top: 75%;
-  left: 20%;
-}
 
 /*Card*/
 /* Overlay Styles */
@@ -330,14 +303,20 @@ button:focus{
 }
 
 
+.textfield{
+  margin-top: 50px;  
+
+}
+
 .enter{
   border-radius: 50px;
   background: #FF8E2C;
   width: 150px;
   height: 30px;
-  padding: 4px;
-  outline: none;
+
 }
+
+
 
 .start{
   border-radius: 50px;
@@ -345,8 +324,8 @@ button:focus{
   padding: 4px;
   width: 150px;
   height: 30px;
-  margin-left: 65px;
-  margin-top: 180px;
+ 
+  margin-top: 30px;
   
 }
 
@@ -361,7 +340,8 @@ button:focus{
   border-radius: 5px;
   font-size: 1.5em;
   color: #fff;
-  margin-top: -5px;
+  margin-top: 5px;
+ 
 }
 
 
@@ -372,8 +352,8 @@ button:focus{
   padding: 4px;
   width: 150px;
   height: 30px;
-  margin-top: -30px;
-  margin-left: 65px;
+  margin-top: 30px;
+  float: left;
 }
 
 .current-box{
@@ -386,7 +366,16 @@ button:focus{
   border-radius: 5px;
   font-size: 1.5em;
   color: #fff;
-  margin-top: -35px;
+  margin-top: 5px;
+}
+
+/* Center the target word container */
+.target-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .target{
@@ -394,8 +383,10 @@ button:focus{
   background: #FF8E2C;
   padding: 4px;
   width: 150px;
-  margin-left: 500px;
-  margin-top: -95px;
+  
+  margin-top: 60px;
+ 
+ 
 }
 
 
@@ -414,20 +405,8 @@ button:focus{
 }
 
 
-.textfield{
-  margin-top: -200px;  
-  margin-left: 50px;
-}
 
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: fixed;
-  color: #fff;
-  margin-left: 900px;
-  margin-top: -30px;
-}
+
 
 #scrollable-container {
   width: 200px;          /* Adjust width as needed */
@@ -444,7 +423,7 @@ button:focus{
   border-radius: 50px;
   background: #FF8E2C;
   padding: 4px;
-  width: 180px;
+  width: 150px;
   padding: 4px;
 }
 
@@ -455,6 +434,7 @@ button:focus{
   gap: 10px;
   max-height: calc(8 * 50px); /* Assuming each word-box is about 50px tall, adjust if needed */
   overflow-y: auto;
+  
 }
 
 
@@ -499,13 +479,13 @@ button:focus{
   padding: 4px;
   width: 150px;
   height: 30px;
-  margin-top: -80px;
-  margin-left: 65px;
+  margin-top: 30px;
+ 
 }
 
 .seconds{
-  margin-left: 90px;
-  margin-top: -70px;
+  margin-left: -140px;
+  margin-top: 75px;
 }
 
 .blur-container {
@@ -576,3 +556,4 @@ button:focus{
   top: 60%;
   left: 80%;
 }
+
