@@ -17,6 +17,7 @@ import letterMatchSFX from "./letterMatchedSFX.mp3";
 import submitSFX from "./submitSFX.mp3";
 import victorySFX from "./victoryMusic.mp3";
 import lostSFX from "./lostSFX.mp3";
+import errorSFX from "./error.mp3";
 import { FaQuestion } from "react-icons/fa"; // Import icons for settings, about, and volume control
 
 const validWords = new Set(wordList);
@@ -73,7 +74,7 @@ const WordLadder = () => {
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [score, setScore] = useState(0);
   const [timerId, setTimerId] = useState(null); // Timer ID
   const [isPaused, setIsPaused] = useState(false); // Modal visibility
@@ -85,7 +86,9 @@ const WordLadder = () => {
   const letterMatchedSFXRef = useRef(new Audio(letterMatchSFX));
   const victorySFXRef = useRef(new Audio(victorySFX));
   const lostSFXRef = useRef(new Audio(lostSFX));
+  const errorSFXRef = useRef(new Audio(errorSFX));
   const [showAboutCard, setShowAboutCard] = useState(false); // State for About card
+  const [isGameover, setIsGameover] = useState(false);
 
   useEffect(() => {
     audioRef.current.loop = true;
@@ -97,12 +100,14 @@ const WordLadder = () => {
 
     // Add a one-time event listener for user interaction if playback was blocked
     const handleUserInteraction = () => {
-      audioRef.current.play().catch((error) => {
-        console.log("Audio playback failed on interaction:", error);
-      });
-      window.removeEventListener("click", handleUserInteraction); // Remove listener after first interaction
-      window.removeEventListener("touchstart", handleUserInteraction); // Remove for touch events as well
-    };
+  audioRef.current
+    .play()
+    .then(() => console.log("Background music is playing"))
+    .catch((error) => console.log("Audio playback failed:", error));
+  window.removeEventListener("click", handleUserInteraction);
+  window.removeEventListener("touchstart", handleUserInteraction);
+};
+
 
     // Listen for user interactions to attempt playback again if initially blocked
     window.addEventListener("click", handleUserInteraction);
@@ -125,12 +130,13 @@ const WordLadder = () => {
     if (timeLeft <= 0) {
       audioRef.current.pause();
       lostSFXRef.current.currentTime = 0;
-      lostSFXRef.current.play().catch((error) => {
+      lostSFXRef.current.play().then(() => console.log("Time's Up music is playing")).catch((error) => {
         console.log("Lost SFX playback failed:", error);
       });
       setTimeLeft(0); // Ensure it stops at zero
       setMessage("Time's up! Game over.");
       setUserCompleted(true);
+      setIsGameover(true);
 
       clearInterval(timerId); // Clear interval to stop countdown
       return;
@@ -182,16 +188,28 @@ const WordLadder = () => {
 
     if (inputWord.length !== startWord.length) {
       setMessage("Word must be the same length!");
+      errorSFXRef.current.currentTime = 0; // Reset playback to the start
+    errorSFXRef.current.play().catch((error) => {
+      console.log("Letter match audio playback failed:", error);
+    });
       return;
     }
 
     if (!validWords.has(inputWord.toLowerCase())) {
       setMessage("Input must be a valid word!");
+      errorSFXRef.current.currentTime = 0; // Reset playback to the start
+    errorSFXRef.current.play().catch((error) => {
+      console.log("Letter match audio playback failed:", error);
+    });
       return;
     }
 
     if (!isOneLetterDifferent(currentWord, inputWord)) {
       setMessage("Only one letter can be changed at a time!");
+      errorSFXRef.current.currentTime = 0; // Reset playback to the start
+    errorSFXRef.current.play().catch((error) => {
+      console.log("Letter match audio playback failed:", error);
+    });
       return;
     }
 
@@ -316,9 +334,7 @@ const WordLadder = () => {
   };
 
   return (
-    
-    <div class="container text-center">
-      
+    <div className="container text-center">
       <div className="blur-container">
         <div className="circle circle1"></div>
         <div className="circle circle2"></div>
@@ -358,6 +374,37 @@ const WordLadder = () => {
           </div>
         </div>
       )}
+
+      {isGameover && (
+        <div className="modal-gameover-overlay">
+          <div className="modal-gameover-content">
+            <h2 className="game-over-title">
+              TIME'S UP
+              <br />
+              GAME OVER
+            </h2>
+            <p className="solution-title">SOLUTION</p>
+            <p className="solution-path">
+              {shortestPath.length > 0
+                ? shortestPath.join(" -> ")
+                : "No path found"}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="modal-gameover-button left"
+            >
+              RETRY
+            </button>
+            <button
+              onClick={handleQuit}
+              className="modal-gameover-button right"
+            >
+              QUIT GAME
+            </button>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={handleAboutClick}
         className="btn_set_ab float-right  rounded-circle"
@@ -438,106 +485,111 @@ const WordLadder = () => {
         </div>
       )}
 
-
-
-       <img src={wordgameImage} className="image"></img>
-    <div class="row align-items-start">
-      <div class="col">
-        <div className="target-container">
-      <h6 className="start float-left text-white mx-4 "> Start Word </h6> 
-      <div className="mt-3 word-box float-left" >
-        <div className="start-box">?</div>
-        <div className="start-box">?</div>
-        <div className="start-box">?</div>
-        <div className="start-box">?</div>
-        <div className="word-box" style={{ position: "fixed" }}>
-          {startWord.split("").map((letter, i) => (
-            <div key={i} className="start-box">
-              {letter}
-            </div>
-          ))}
-        </div>
-      </div>
-      </div>
-
-      <div className="target-container">
-      <h6 className="current-word float-left text-white mx-4 ">Current Word</h6>
-     
-      <div className="mt-3 word-box float-left">
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="current-box">?</div>
-        <div className="word-box" style={{ position: "fixed" }}>
-          {currentWord.split("").map((letter, i) => (
-            <div key={i} className="current-box">
-              {letter}
-            </div>
-          ))}
-        </div>
-        </div>
-        </div>
-        <div className="target-container">
-        <h6 className="float-left time text-white mx-4">Time Left: </h6>
-        <h5 className="float-left text-white seconds">{timeLeft} seconds</h5>
-        </div>
-      </div>
-      <div class="col">
-        <div className="target-container">
-      <h6 className="target text-white ">Target Word</h6>
-      <div className="mt-3  word-box" >
-        <div className="target-box"></div>
-        <div className="target-box"></div>
-        <div className="target-box"></div>
-        <div className="target-box"></div>
-        <div className="word-box" style={{ position: "fixed" }}>
-          {getRevealedTarget(currentWord, targetWord)
-            .split("")
-            .map((letter, i) => (
-              <div key={i} className="target-box">
-                {letter}
-              </div>
-            ))}
-        </div>
-      </div>
-      </div>
-      <form onSubmit={handleSubmit} className="textfield  ">
-        <input
-          className="text-white"
-          type="text"
-          value={inputWord}
-          onChange={handleChange}
-          placeholder="Enter next word"
-          id="single-line-border"
-          disabled={userCompleted}
-        />
-        <br></br><br></br>
-        <button type="submit" className="enter text-white ">
-          Enter
-        </button>
-      </form>
-      <p style={{ color: "red" }}>{message}</p>
-      
-      </div>
-      <div class="col">
-      <div  className="target-container">
-          <h6 className="all float-right text-white mx-4">All Steps Taken</h6>
-          <div className="steps-taken-list float-right mt-3" id="scrollable-container">
-            {steps.map((word, index) => (
-              <div key={index} className="word-box">
-                {word.split("").map((letter, i) => (
-                  <div key={i} className="letter-box">
+      <img src={wordgameImage} className="image"></img>
+      <div className="row align-items-start">
+        <div className="col">
+          <div className="target-container">
+            <h6 className="start float-left text-white mx-4 "> Start Word </h6>
+            <div className="mt-3 word-box float-left">
+              <div className="start-box">?</div>
+              <div className="start-box">?</div>
+              <div className="start-box">?</div>
+              <div className="start-box">?</div>
+              <div className="word-box" style={{ position: "fixed" }}>
+                {startWord.split("").map((letter, i) => (
+                  <div key={i} className="start-box">
                     {letter}
                   </div>
                 ))}
               </div>
-            ))}
-         </div>
-        {/* Add a button or form to call handleAddWord with new words */}
-      </div>
+            </div>
+          </div>
+
+          <div className="target-container">
+            <h6 className="current-word float-left text-white mx-4 ">
+              Current Word
+            </h6>
+
+            <div className="mt-3 word-box float-left">
+              <div className="current-box">?</div>
+              <div className="current-box">?</div>
+              <div className="current-box">?</div>
+              <div className="current-box">?</div>
+              <div className="word-box" style={{ position: "fixed" }}>
+                {currentWord.split("").map((letter, i) => (
+                  <div key={i} className="current-box">
+                    {letter}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="target-container">
+            <h6 className="float-left time text-white mx-4">Time Left: </h6>
+            <h5 className="float-left text-white seconds">
+              {timeLeft} seconds
+            </h5>
+          </div>
+        </div>
+        <div className="col">
+          <div className="target-container">
+            <h6 className="target text-white ">Target Word</h6>
+            <div className="mt-3  word-box">
+              <div className="target-box"></div>
+              <div className="target-box"></div>
+              <div className="target-box"></div>
+              <div className="target-box"></div>
+              <div className="word-box" style={{ position: "fixed" }}>
+                {getRevealedTarget(currentWord, targetWord)
+                  .split("")
+                  .map((letter, i) => (
+                    <div key={i} className="target-box">
+                      {letter}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+          <form onSubmit={handleSubmit} className="textfield  ">
+            <input
+              className="text-white"
+              type="text"
+              value={inputWord}
+              onChange={handleChange}
+              placeholder="Enter next word"
+              id="single-line-border"
+              disabled={userCompleted}
+            />
+            <br></br>
+            <br></br>
+            <button type="submit" className="enter text-white ">
+              Enter
+            </button>
+          </form>
+          <p style={{ color: "red" }}>{message}</p>
+        </div>
+        <div className="col">
+          <div className="target-container">
+            <h6 className="all float-right text-white mx-4">All Steps Taken</h6>
+            <div
+              className="steps-taken-list float-right mt-3"
+              id="scrollable-container"
+            >
+              {steps.map((word, index) => (
+                <div key={index} className="word-box">
+                  {word.split("").map((letter, i) => (
+                    <div key={i} className="letter-box">
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            {/* Add a button or form to call handleAddWord with new words */}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 
