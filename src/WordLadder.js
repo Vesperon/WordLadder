@@ -89,6 +89,7 @@ const WordLadder = () => {
   const errorSFXRef = useRef(new Audio(errorSFX));
   const [showAboutCard, setShowAboutCard] = useState(false); // State for About card
   const [isGameover, setIsGameover] = useState(false);
+  const [isGameVictory, setIsGameVictory] = useState(false);
 
   useEffect(() => {
     audioRef.current.loop = true;
@@ -251,6 +252,7 @@ const WordLadder = () => {
       setUserCompleted(true); // Trigger winning modal
       clearInterval(timerId); // Stop the timer
       setIsPaused(true); // Prevent any further actions
+      setIsGameVictory(true);
       audioRef.current.pause(); // Stop music
       victorySFXRef.current.currentTime = 0;
       victorySFXRef.current.play().catch(console.error);
@@ -417,7 +419,7 @@ const WordLadder = () => {
 
 
  {/* victory card */}
-{userCompleted && (
+{isGameVictory && (
         <div className="modal-gameover-overlay">
           <div className="modal-gameover-content">
             <h2 className="game-over-title">
