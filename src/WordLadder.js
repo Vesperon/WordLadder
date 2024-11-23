@@ -15,7 +15,7 @@ import wordgameImage from "../src/wordgame.png";
 import backgroundMusic from "./bg1.mp3";
 import letterMatchSFX from "./letterMatchedSFX.mp3";
 import submitSFX from "./submitSFX.mp3";
-import victorySFX from "./victoryMusic.MP3";
+import victorySFX from "./victoryMusic.mp3";
 import lostSFX from "./lostSFX.mp3";
 import errorSFX from "./error.mp3";
 import { FaQuestion } from "react-icons/fa"; // Import icons for settings, about, and volume control
