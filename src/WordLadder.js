@@ -15,7 +15,7 @@ import wordgameImage from "../src/wordgame.png";
 import backgroundMusic from "./bg1.mp3";
 import letterMatchSFX from "./letterMatchedSFX.mp3";
 import submitSFX from "./submitSFX.mp3";
-import victorySFX from "./victoryMusic.mp3";
+import victorySFX from "./victoryMusic.MP3";
 import lostSFX from "./lostSFX.mp3";
 import errorSFX from "./error.mp3";
 import { FaQuestion } from "react-icons/fa"; // Import icons for settings, about, and volume control
@@ -65,8 +65,8 @@ const getRandomWord = (words) => {
 
 const WordLadder = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
-  const [startWord, setStartWord] = useState(getRandomWord(wordList));
-  const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
+  const [startWord, setStartWord] = useState("play");
+  const [targetWord, setTargetWord] = useState("slay");
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
   const [hiddenWord, setHiddenWord] = useState("");
@@ -120,10 +120,13 @@ const WordLadder = () => {
     };
   }, []);
 
+  
+
   useEffect(() => {
     const path = findShortestPath(startWord, targetWord, wordList);
     setShortestPath(path);
   }, [startWord, targetWord]);
+
 
   // Timer countdown effect
   useEffect(() => {
@@ -142,6 +145,11 @@ const WordLadder = () => {
       return;
     }
 
+    if (userCompleted || timeLeft <= 0) {
+      clearInterval(timerId);
+      return;
+    }
+
     if (!isPaused) {
       const id = setInterval(() => {
         setTimeLeft((prevTime) => Math.max(prevTime - 1, 0)); // Prevent it from going below zero
@@ -150,7 +158,10 @@ const WordLadder = () => {
 
       return () => clearInterval(id); // Clear interval on unmount or pause
     }
-  }, [isPaused, timeLeft]);
+  }, [isPaused, timeLeft, userCompleted]);
+
+
+
 
   const handleQuit = () => {
     navigate("/"); // Navigate to home route
@@ -185,41 +196,40 @@ const WordLadder = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
+    // Validate word length
     if (inputWord.length !== startWord.length) {
       setMessage("Word must be the same length!");
-      errorSFXRef.current.currentTime = 0; // Reset playback to the start
-    errorSFXRef.current.play().catch((error) => {
-      console.log("Letter match audio playback failed:", error);
-    });
+      errorSFXRef.current.currentTime = 0;
+      errorSFXRef.current.play().catch(console.error);
       return;
     }
-
+  
+    // Validate word existence
     if (!validWords.has(inputWord.toLowerCase())) {
       setMessage("Input must be a valid word!");
-      errorSFXRef.current.currentTime = 0; // Reset playback to the start
-    errorSFXRef.current.play().catch((error) => {
-      console.log("Letter match audio playback failed:", error);
-    });
+      errorSFXRef.current.currentTime = 0;
+      errorSFXRef.current.play().catch(console.error);
       return;
     }
-
+  
+    // Validate one-letter difference
     if (!isOneLetterDifferent(currentWord, inputWord)) {
       setMessage("Only one letter can be changed at a time!");
-      errorSFXRef.current.currentTime = 0; // Reset playback to the start
-    errorSFXRef.current.play().catch((error) => {
-      console.log("Letter match audio playback failed:", error);
-    });
+      errorSFXRef.current.currentTime = 0;
+      errorSFXRef.current.play().catch(console.error);
       return;
     }
-
+  
+    // Update current word and steps
     setSteps([...steps, inputWord]);
     setCurrentWord(inputWord);
     setMessage("");
-
+  
     const newScore = calculateScore(inputWord, targetWord);
     setScore((prevScore) => prevScore + newScore);
-
+  
+    // Check if user matched a letter
     let hasMatchingLetter = false;
     for (let i = 0; i < inputWord.length; i++) {
       if (inputWord[i] === targetWord[i]) {
@@ -227,34 +237,31 @@ const WordLadder = () => {
         break;
       }
     }
-
+  
     if (hasMatchingLetter && !isMutedSFX) {
       handleLetterMatchSFX();
-      return;
+    } else {
+      submitSFXRef.current.currentTime = 0;
+      submitSFXRef.current.play().catch(console.error);
     }
-
-    submitSFXRef.current.currentTime = 0; // Reset playback to the start
-    submitSFXRef.current.play().catch((error) => {
-      console.log("Submit audio playback failed:", error);
-    });
+  
+    // Check for game completion
     if (inputWord === targetWord) {
       setMessage("Congratulations! You've completed the word ladder!");
-      setUserCompleted(true);
-      clearInterval(timerId); // Stop the timer when the target word is found
-      audioRef.current.pause();
-      victorySFXRef.current.currentTime = 0; // Reset playback to the start
-      victorySFXRef.current.play().catch((error) => {
-        console.log("Submit audio playback failed:", error);
-      });
+      setUserCompleted(true); // Trigger winning modal
+      clearInterval(timerId); // Stop the timer
+      setIsPaused(true); // Prevent any further actions
+      audioRef.current.pause(); // Stop music
+      victorySFXRef.current.currentTime = 0;
+      victorySFXRef.current.play().catch(console.error);
+  
+      // Calculate final solution path (if needed)
       const combinedWordList = [...new Set([...wordList, ...steps])];
-      const userPath = findShortestPath(
-        startWord,
-        targetWord,
-        combinedWordList
-      );
+      const userPath = findShortestPath(startWord, targetWord, combinedWordList);
       setShortestPath(userPath);
     }
-
+  
+    // Clear input field for the next attempt
     setInputWord("");
   };
 
@@ -347,6 +354,8 @@ const WordLadder = () => {
       <button onClick={handlePause} className="pause-button ">
         <FaPause />
       </button>
+
+       {/* pause card */}
       {isPaused && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -375,6 +384,7 @@ const WordLadder = () => {
         </div>
       )}
 
+ {/* game over card */}
       {isGameover && (
         <div className="modal-gameover-overlay">
           <div className="modal-gameover-content">
@@ -405,12 +415,45 @@ const WordLadder = () => {
         </div>
       )}
 
+
+ {/* victory card */}
+{userCompleted && (
+        <div className="modal-gameover-overlay">
+          <div className="modal-gameover-content">
+            <h2 className="game-over-title">
+            Congratulations! 
+              <br />
+              You've completed the word ladder!
+            </h2>
+            <p className="solution-title">SOLUTION</p>
+            <p className="solution-path">
+              {shortestPath.length > 0
+                ? shortestPath.join(" -> ")
+                : "No path found"}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="modal-gameover-button left"
+            >
+              PLAY AGAIN
+            </button>
+            <button
+              onClick={handleQuit}
+              className="modal-gameover-button right"
+            >
+              QUIT GAME
+            </button>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={handleAboutClick}
         className="btn_set_ab float-right  rounded-circle"
       >
         <FaQuestion className="fs-5 text-white" />
       </button>
+      
       {/* Conditionally render the About card as an overlay */}
       {showAboutCard && (
         <div className="overlay">
