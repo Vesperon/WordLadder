@@ -313,7 +313,7 @@ button:focus{
   background: #FF8E2C;
   width: 150px;
   height: 30px;
-
+  margin-right: 130px;
 }
 
 
@@ -634,3 +634,88 @@ button:focus{
   bottom: 35px;
   right: 50px;
 }
+
+/* Splash Effect */
+.enter {
+  position: relative;
+  overflow: hidden; /* To ensure the splash stays inside the button */
+  margin-left: 135px;
+  border-radius: 50px;
+  background: #FF8E2C;
+  width: 150px;
+  height: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: white;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enter:active {
+  background: #e87422;
+}
+
+.splash {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: rgba(255, 255, 255, 0.5);
+  animation: splashEffect 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes splashEffect {
+  to {
+    transform: scale(4); /* Adjust size as needed */
+    opacity: 0;
+  }
+}
+
+/* Star Particle Styles */
+.star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: gold;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 1;
+  animation: starEffect 1.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes starEffect {
+  0% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2) translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
+
+/* Box Particle Effect */
+.box-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 165, 0, 0.8); /* Semi-transparent orange */
+  border-radius: 2px; /* Slightly rounded corners */
+  animation: particleScatter 1s ease-out forwards;
+  pointer-events: none; /* Ignore pointer events on the boxes */
+}
+
+@keyframes particleScatter {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+

@@ -22,6 +22,8 @@ import { FaQuestion } from "react-icons/fa"; // Import icons for settings, about
 
 const validWords = new Set(wordList);
 
+
+// to check if the word change one letter a time
 const isOneLetterDifferent = (word1, word2) => {
   let diffCount = 0;
   for (let i = 0; i < word1.length; i++) {
@@ -31,6 +33,8 @@ const isOneLetterDifferent = (word1, word2) => {
   return diffCount === 1;
 };
 
+
+//finding the shortest path using BFS
 const findShortestPath = (startWord, targetWord, wordList) => {
   const queue = [[startWord]];
   const visited = new Set([startWord]);
@@ -50,7 +54,7 @@ const findShortestPath = (startWord, targetWord, wordList) => {
   }
   return [];
 };
-
+//reveal the target word 
 const getRevealedTarget = (currentWord, targetWord) => {
   return targetWord
     .split("")
@@ -65,17 +69,15 @@ const getRandomWord = (words) => {
 
 const WordLadder = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
-  const [startWord, setStartWord] = useState("play");
-  const [targetWord, setTargetWord] = useState("slay");
+  const [startWord, setStartWord] = useState(getRandomWord(wordList));
+  const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
-  const [hiddenWord, setHiddenWord] = useState("");
   const [steps, setSteps] = useState([startWord]);
   const [message, setMessage] = useState("");
   const [shortestPath, setShortestPath] = useState([]);
   const [userCompleted, setUserCompleted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
-  const [score, setScore] = useState(0);
   const [timerId, setTimerId] = useState(null); // Timer ID
   const [isPaused, setIsPaused] = useState(false); // Modal visibility
   const [isMutedMusic, setIsMutedMusic] = useState(false); // Mute music state
@@ -89,6 +91,7 @@ const WordLadder = () => {
   const errorSFXRef = useRef(new Audio(errorSFX));
   const [showAboutCard, setShowAboutCard] = useState(false); // State for About card
   const [isGameover, setIsGameover] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
 
   useEffect(() => {
     audioRef.current.loop = true;
@@ -171,22 +174,6 @@ const WordLadder = () => {
     setInputWord(e.target.value);
   };
 
-  const calculateScore = (inputWord, targetWord) => {
-    let points = 0;
-
-    for (let i = 0; i < inputWord.length; i++) {
-      if (inputWord[i] === targetWord[i]) {
-        points++;
-      }
-    }
-
-    if (inputWord === targetWord) {
-      points += 10; // Adjust points as needed
-    }
-
-    return points;
-  };
-
   const handleLetterMatchSFX = () => {
     letterMatchedSFXRef.current.currentTime = 0; // Reset playback to the start
     letterMatchedSFXRef.current.play().catch((error) => {
@@ -196,6 +183,36 @@ const WordLadder = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const submitButton = e.target.querySelector('.enter');
+    const rect = submitButton.getBoundingClientRect();
+  
+    // Generate multiple stars
+    for (let i = 0; i < 10; i++) {
+      const star = document.createElement('span');
+      star.className = 'star';
+  
+      // Random position and movement for each star
+      const angle = Math.random() * 2 * Math.PI; // Random angle in radians
+      const distance = Math.random() * 100 + 50; // Random distance (50px to 150px)
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+  
+      // Place the star at the center of the button
+      star.style.left = `${rect.width / 2}px`;
+      star.style.top = `${rect.height / 2}px`;
+  
+      // Use CSS custom properties to control final position
+      star.style.setProperty('--x', `${x}px`);
+      star.style.setProperty('--y', `${y}px`);
+  
+      submitButton.appendChild(star);
+  
+      // Remove the star after animation
+      setTimeout(() => {
+        star.remove();
+      }, 1500); // Match the animation duration
+    }
   
     // Validate word length
     if (inputWord.length !== startWord.length) {
@@ -226,8 +243,7 @@ const WordLadder = () => {
     setCurrentWord(inputWord);
     setMessage("");
   
-    const newScore = calculateScore(inputWord, targetWord);
-    setScore((prevScore) => prevScore + newScore);
+   
   
     // Check if user matched a letter
     let hasMatchingLetter = false;
@@ -248,7 +264,7 @@ const WordLadder = () => {
     // Check for game completion
     if (inputWord === targetWord) {
       setMessage("Congratulations! You've completed the word ladder!");
-      setUserCompleted(true); // Trigger winning modal
+      setIsWinner(true); // Trigger winning modal
       clearInterval(timerId); // Stop the timer
       setIsPaused(true); // Prevent any further actions
       audioRef.current.pause(); // Stop music
@@ -266,10 +282,43 @@ const WordLadder = () => {
   };
 
   const handleAboutClick = () => {
+    setIsPaused((prevState) => !prevState); // Toggle the pause state
+
+    if (isPaused) {
+      // Resume the timer and music if it's paused
+      const id = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+      setTimerId(id); // Store timer ID
+
+      if (!isMutedMusic) {
+        audioRef.current.play().catch((error) => {
+          console.log("Audio playback failed:", error);
+        });
+      }
+    } else {
+      // Pause the timer and music if the game is paused
+      clearInterval(timerId);
+      audioRef.current.pause();
+    }
     setShowAboutCard(true); // Show the About card overlay
   };
 
   const handleCloseAbout = () => {
+    setIsPaused(false); // Set pause state to false
+
+    // Resume the timer
+    const id = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+    setTimerId(id); // Store the new timer ID
+
+    // Resume the music if it's not muted
+    if (!isMutedMusic) {
+      audioRef.current.play().catch((error) => {
+        console.log("Audio playback failed:", error);
+      });
+    }
     setShowAboutCard(false); // Close the About card overlay
   };
 
@@ -312,18 +361,7 @@ const WordLadder = () => {
     }
   };
 
-  const handleRetry = () => {
-    setStartWord(getRandomWord(wordList));
-    setTargetWord(getRandomWord(wordList));
-    setCurrentWord(startWord);
-    setInputWord("");
-    setSteps([startWord]);
-    setMessage("");
-    setUserCompleted(false);
-    setTimeLeft(300);
-    setScore(0);
-    setIsPaused(false);
-  };
+  
 
   const toggleMusic = () => {
     if (audioRef.current) {
@@ -339,6 +377,49 @@ const WordLadder = () => {
     lostSFXRef.current.muted = !isMutedSFX;
     setIsMutedSFX((prev) => !prev);
   };
+
+
+  // effects when you click anywhere in the screen
+  const handleBackgroundClick = (e) => {
+    const container = document.querySelector('.container'); // Adjust to your main container
+  
+    // Generate multiple small box particles
+    for (let i = 0; i < 15; i++) { // Adjust the number of particles as needed
+      const box = document.createElement('div');
+      box.className = 'box-particle';
+  
+      // Calculate random movement direction and distance
+      const angle = Math.random() * 2 * Math.PI; // Random angle in radians
+      const distance = Math.random() * 100 + 20; // Random distance (20px to 120px)
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+  
+      // Set the initial position of the particle to the cursor's position
+      box.style.left = `${e.clientX}px`; // Cursor's X position relative to the viewport
+      box.style.top = `${e.clientY}px`; // Cursor's Y position relative to the viewport
+  
+      // Use CSS variables to control the particle's final position
+      box.style.setProperty('--x', `${x}px`);
+      box.style.setProperty('--y', `${y}px`);
+  
+      // Append the particle to the container
+      document.body.appendChild(box);
+  
+      // Remove the particle after animation ends
+      setTimeout(() => {
+        box.remove();
+      }, 1000); // Match the animation duration
+    }
+  };
+  
+  // Add an event listener to the entire document or container
+  useEffect(() => {
+    document.addEventListener('click', handleBackgroundClick);
+  
+    return () => {
+      document.removeEventListener('click', handleBackgroundClick);
+    };
+  }, []);
 
   return (
     <div className="container text-center">
@@ -417,7 +498,7 @@ const WordLadder = () => {
 
 
  {/* victory card */}
-{userCompleted && (
+{isWinner && (
         <div className="modal-gameover-overlay">
           <div className="modal-gameover-content">
             <h2 className="game-over-title">
