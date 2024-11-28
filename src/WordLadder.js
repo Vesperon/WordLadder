@@ -69,8 +69,8 @@ const getRandomWord = (words) => {
 
 const WordLadder = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
-  const [startWord, setStartWord] = useState(getRandomWord(wordList));
-  const [targetWord, setTargetWord] = useState(getRandomWord(wordList));
+  const [startWord, setStartWord] = useState("bine");
+  const [targetWord, setTargetWord] = useState("pard");
   const [currentWord, setCurrentWord] = useState(startWord);
   const [inputWord, setInputWord] = useState("");
   const [steps, setSteps] = useState([startWord]);
